@@ -67,6 +67,15 @@ let controller = {
         var start = moment((req.param('date'))).startOf('day').format();
         var end = moment((req.param('date'))).endOf('day').format();
         Money.find({email:req.user.sub,date: { $gte: start, $lte: end } }).then(data=>res.json({data:data}));
+    },
+    tag: (req, res, next) => {
+        Money.find({email:req.user.sub,tag: req.param('tag') }).then(data=>res.json({data:data}));
+    },
+    amount: (req, res, next) => {
+        Money.find({email:req.user.sub,amount: req.param('amount') }).then(data=>res.json({data:data}));
+    },
+    product: (req, res, next) => {
+        Money.find({email:req.user.sub,product: req.param('product') }).then(data=>res.json({data:data}));
     }
 }
 
