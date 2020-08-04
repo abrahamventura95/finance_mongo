@@ -10,6 +10,7 @@ const db = mongoose.connection;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var moneyRouter = require('./routes/money');
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/money', moneyRouter);
 
 
 // catch 404 and forward to error handler
