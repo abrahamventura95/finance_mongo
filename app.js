@@ -11,6 +11,7 @@ const db = mongoose.connection;
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var moneyRouter = require('./routes/money');
+var coinRouter = require('./routes/coins');
 
 var app = express();
 
@@ -38,6 +39,7 @@ app.use(passport.initialize());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/money', moneyRouter);
+app.use('/coins', coinRouter);
 
 
 // catch 404 and forward to error handler

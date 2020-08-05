@@ -1,4 +1,5 @@
 const User = require('../Models/user');
+const Money = require('../Models/money');
 const bcrypt = require('bcrypt');
 const passport  = require('passport');
 const jwt = require('jsonwebtoken');
@@ -59,9 +60,33 @@ let controller = {
     	User.find({},{ password:0 }).then(data=>res.json(data));
     },
     get: (req, res, next) => {
-    	User.findOne({_id:req.user.sub}, {password: 0})
-		    .then(data=>{res.json(data)})
-		    .catch(err=>{res.json(err)}) 
+        User.findOne({_id:req.user.sub}, {password: 0})
+            .then(data=>{res.json(data)})
+            .catch(err=>{res.json(err)}) 
+    },
+    update: (req, res, next) => {
+        User.findOne({_id:req.user.sub})
+            .then(data=>{
+                data.name = req.body.name || data.name;
+                data.gender = req.body.gender || data.gender;
+                data.coin = req.body.coin || data.coin;
+                data.convert = req.body.convert || data.convert;
+                if(req.body.password != undefined){
+                    var hash = bcrypt.hashSync(req.body.password, parseInt(process.env.BCRYPT_ROUNDS));
+                    data.password = hash;
+                }
+                data.save();
+                res.json(data)
+            })
+            .catch(err=>{res.json(err)}) 
+    },
+    delete: (req, res, next) => {
+        User.deleteOne({_id:req.user.sub})
+            .then(data=>{
+                Money.deleteMany({email:req.user.sub});
+                res.json(data)
+            })
+            .catch(err=>{res.json(err)}) 
     }
 }
 

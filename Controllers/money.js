@@ -6,7 +6,7 @@ let controller = {
     create: (req, res, next) => {
         console.log("Create");
         let document = new Money({
-            email: req.user.sub,
+            email: req.user.email,
             tag: req.body.tag || '',
             date: req.body.date || Date.now(),
             amount: req.body.amount || 0,
@@ -22,10 +22,10 @@ let controller = {
         Money.find({}).then(data=>res.json({data:data}));
     },
     moneyUser: (req, res, next) => {
-        Money.find({email:req.user.sub,type: req.param('type') }).then(data=>res.json({data:data}));
+        Money.find({email:req.user.email,type: req.param('type') }).then(data=>res.json({data:data}));
     },
     balance: (req, res, next) => {
-        Money.find({email:req.user.sub})
+        Money.find({email:req.user.email})
             .then(data=>{
                 let obj = {
                     balance: 0,
@@ -61,12 +61,42 @@ let controller = {
         
         var start = moment(date.toISOString()).startOf('month').format();
         var end = moment(date.toISOString()).endOf('month').format();
-        Money.find({email:req.user.sub,date: { $gte: start, $lte: end } }).then(data=>res.json({data:data}));
+        Money.find({email:req.user.email,date: { $gte: start, $lte: end } }).then(data=>res.json({data:data}));
     },
     getbyDate: (req, res, next) => {
         var start = moment((req.param('date'))).startOf('day').format();
         var end = moment((req.param('date'))).endOf('day').format();
-        Money.find({email:req.user.sub,date: { $gte: start, $lte: end } }).then(data=>res.json({data:data}));
+        Money.find({email:req.user.email,date: { $gte: start, $lte: end } }).then(data=>res.json({data:data}));
+    },
+    tag: (req, res, next) => {
+        Money.find({email:req.user.email,tag: req.param('tag') }).then(data=>res.json({data:data}));
+    },
+    amount: (req, res, next) => {
+        Money.find({email:req.user.email,amount: req.param('amount') }).then(data=>res.json({data:data}));
+    },
+    product: (req, res, next) => {
+        Money.find({email:req.user.email,product: req.param('product') }).then(data=>res.json({data:data}));
+    },
+    update: (req, res, next) => {
+        Money.findOne({_id:req.param('id')})
+            .then(data=>{
+                data.tag = req.body.tag || data.tag;
+                data.date = req.body.date || data.date;
+                data.amount = req.body.amount || data.amount;
+                data.product = req.body.product || data.product;
+                data.quantity = req.body.quantity || data.quantity;
+                data.coin = req.body.coin || data.coin;
+                data.convert = req.body.convert || data.convert;
+
+                data.save();
+                res.json(data)
+            })
+            .catch(err=>{res.json(err)}) 
+    },
+    delete: (req, res, next) => {
+        Money.deleteOne({_id:req.param('id')})
+            .then(data=>{res.json(data)})
+            .catch(err=>{res.json(err)}) 
     }
 }
 
